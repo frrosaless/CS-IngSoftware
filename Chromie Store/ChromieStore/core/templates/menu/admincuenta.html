@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block titulopagina %}Administrar Cuenta{% endblock %}
+                {% block menunavegacion %}
+                    {% if not user.is_authenticated %}
+                        <li class="nav-item"><a class="nav-link" href="{% url 'index_dyn' %}">Inicio</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'registro_dyn' %}">Registro</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'iniciosesion_dyn' %}">Iniciar sesion</a></li>
+                    {% else %}
+                        <li class="nav-item"><a class="nav-link" href="">Hola {{ request.user.username }}!</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'index_dyn' %}">Inicio</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'carrito_dyn' %}">Carrito</a></li>
+                        <li class="nav-item"><a class="nav-link fw-bold" href="{% url 'admincuenta_dyn' %}">Administrar Cuenta</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'cerrarsesion_dyn' %}">Salir</a></li>
+                    {% endif %}
+                {% endblock %}
+{% block imagenbanner %}"{% static 'assets/images/chromiew.jpg' %}"{% endblock %}
+            {% block descbanner %}
+                <h3 class="card-title">Administra tu cuenta</h3>
+                <h6 class="card-text">Cambia tu contraseña y actualiza tu información personal.</h6>
+            {% endblock %}
+{% block contenido %}
+        <div class="box shadow p-4">
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{% if message.tags == "error" %}danger{% else %}{{ message.tags }}{% endif %} alert.dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+    <!-- Formulario para cambiar contraseña -->
+            <h1 class="text-white">Cambiar contraseña</h1>
+            <form id="form-cambioContrasena" class="text-white w-100 mx-auto mb-5" method="post" action="{% url 'cambiar_contrasena_dyn' %}">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="oldPassword" class="form-label">Contraseña actual <span style="color: red;">*</span></label>
+                    <input type="password" class="form-control" id="oldPassword" name="oldPassword" autocomplete="off" placeholder="Ingresa tu contraseña actual">
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Nueva contraseña <span style="color: red;">*</span></label>
+                    <input type="password" class="form-control" id="password" name="password" autocomplete="off" placeholder="Ingresa tu nueva contraseña">
+                </div>
+                <div class="mb-3">
+                    <label for="confirmPassword" class="form-label">Confirmar contraseña <span style="color: red;">*</span></label>
+                    <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" autocomplete="off" placeholder="Confirma tu contraseña">
+                </div>
+                <div class="d-flex justify-content-between gap-5">
+                    <button type="submit" class="btn btn-primary w-50">Cambiar contraseña</button>
+                    <button type="reset" class="btn btn-secondary w-50">Limpiar campos</button>
+                </div>
+            </form>
+
+            <!-- Formulario para actualizar datos -->
+            <h1 class="text-white">Actualiza tus datos</h1>
+            <form id="form-actualizarDatos" class="text-white w-100 mx-auto" method="post" action="{% url 'actualizar_datos_dyn' %}">
+                {% csrf_token %}
+                <div class="d-flex justify-content-between gap-5">
+                    <div class="mb-3 w-50">
+                        <label for="first_name" class="form-label">Nombre <span style="color: red;">*</span></label>
+                        <input type="text" class="form-control" id="first_name" name="first_name" autocomplete="off" placeholder="Ingresa tu nombre" value="{{ user.first_name }}">
+                    </div>
+                    <div class="mb-3 w-50">
+                        <label for="last_name" class="form-label">Apellido <span style="color: red;">*</span></label>
+                        <input type="text" class="form-control" id="last_name" name="last_name" autocomplete="off" placeholder="Ingresa tu apellido" value="{{ user.last_name }}">
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">Correo electrónico <span style="color: red;">*</span></label>
+                    <input type="email" class="form-control" id="email" name="email" autocomplete="off" placeholder="Ingresa tu correo electrónico" value="{{ user.email }}">
+                </div>
+                <div class="d-flex justify-content-between gap-5">
+                    <button type="submit" class="btn btn-primary w-50">Actualizar datos</button>
+                    <button type="reset" class="btn btn-secondary w-50">Limpiar campos</button>
+                </div>
+            </form>
+        </div>
+{% endblock %}
+{% block scripts %}
+<script src="{% static 'javascript/cambiocontrasena.js' %}"></script>
+{% endblock %}

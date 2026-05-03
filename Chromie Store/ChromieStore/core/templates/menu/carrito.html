@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block titulopagina %}Carrito{% endblock %}
+                {% block menunavegacion %}
+                    {% if not user.is_authenticated %}
+                        <li class="nav-item"><a class="nav-link" href="{% url 'index_dyn' %}">Inicio</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'registro_dyn' %}">Registro</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'iniciosesion_dyn' %}">Iniciar sesion</a></li>
+                    {% else %}
+                        <li class="nav-item"><a class="nav-link" href="">Hola {{ request.user.username }}!</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'index_dyn' %}">Inicio</a></li>
+                        <li class="nav-item"><a class="nav-link fw-bold" href="{% url 'carrito_dyn' %}">Carrito</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'admincuenta_dyn' %}">Administrar Cuenta</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'cerrarsesion_dyn' %}">Salir</a></li>
+                    {% endif %}
+                {% endblock %}
+{% block imagenbanner %}"{% static 'assets/images/chromiew.jpg' %}"{% endblock %}
+            {% block descbanner %}
+                <h3 class="card-title">Carro de compras</h3>
+                <h6 class="card-text">Aqui puedes revisar los productos que has agregado a tu carrito.</h6>
+            {% endblock %}
+{% block contenido %}
+    <div class="box shadow p-4">
+        {% if productos %}
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-2 g-4">
+            {% for item in productos %}
+            <div class="col">
+                <div class="card mb-3 bg-dark text-white">
+                    <div class="row g-0">
+                        <div class="col-md-4">
+                            <img src="{{ item.producto.imagen.url }}" class="img-fluid rounded-start" alt="{{ item.producto.nombre }}">
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ item.producto.nombre }}</h5>
+                                <p class="card-text">{{ item.producto.descripcion }}</p>
+                                <div class="gap-2 d-flex justify-content-center">
+                                    <h4 class="card-text fw-bold w-50">${{ item.subtotal|floatformat:0 }} CLP</h4>
+                                    <a href="{% url 'eliminar_del_carrito' item.producto.id %}" class="btn btn-danger w-50">Eliminar producto</a>
+                                </div>
+                                <div class="text-end mt-2">
+                                    <span class="badge bg-secondary">Cantidad: {{ item.cantidad }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="gap-2 d-grid justify-content-end ">
+            <h4 class="card-text fw-bold text-white">Total: ${{ total|floatformat:0 }} CLP</h4>
+            <button class="btn btn-success">Finalizar Compra</button>
+        </div>
+        {% else %}
+        <div class="alert alert-info text-center">El carrito está vacío.</div>
+        {% endif %}
+    </div>
+{% endblock %}
